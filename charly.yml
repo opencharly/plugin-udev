@@ -7,8 +7,55 @@
 #
 # Declaring discover: is the whole fix: the candy is scanned, the CUE schema gate
 # applies, and the STOCK `charly box validate` step starts working with no workflow
-# change. This file declares no entities of its own - it only tells charly where to look.
-version: 2026.232.0520
+# change. This file also declares the R10 witness bed (below).
+version: 2026.249.2125
 discover:
     - path: candy
       recursive: true
+
+# =============================================================================
+# check-udev-app + check-udev-local — the R10 witness for the externalized
+# `charly udev` COMMAND (candy/plugin-udev, command:udev). Relocated here from
+# opencharly/charly's charly.yml: the plugin's OWN repo is where the command
+# lives, and the local template now composes the LOCAL candy (no @github pin),
+# so the bed exercises this checkout.
+# =============================================================================
+check-udev-app:
+    local:
+        description: |-
+            Minimal kind:local template for the check-udev-local bed — composes the
+            command-only plugin-udev candy (no install content) so the bed exercises the
+            externalized `charly udev` CLI host-side.
+        candy:
+            - plugin-udev
+check-udev-local:
+    local:
+        from: check-udev-app
+        host: local
+        disposable: true
+        lifecycle: dev
+        description: >-
+            Sole proof of the externalized `charly udev` COMMAND (candy/plugin-udev, command:udev), the first externalizable-command precedent in the core-externalization program. A disposable kind:local deploy on host: local runs the two GPU-less udev sub-commands host-side: `charly udev generate` asserts the exact 99-charly-container-access rule lines on stdout (the host charly resolves the `udev` word via the discovered plugin-udev prescan and syscall.Exec's the plugin binary), and `charly udev status` exits 0 with a graceful device + rule report on a GPU-less host.
+        plan:
+            - check: command=charly udev generate prints the exact 99-charly-container-access rule lines
+              id: udev-generate-rules
+              stdout:
+                - contains: 'SUBSYSTEM=="drm", KERNEL=="card[0-9]*", GROUP="render", MODE="0660"'
+                - contains: 'SUBSYSTEM=="kfd", KERNEL=="kfd", GROUP="render", MODE="0660"'
+                - contains: 'SUBSYSTEM=="vfio", GROUP="kvm", MODE="0660"'
+              context:
+                - runtime
+              command:
+                command: ${CHARLY_BIN} udev generate
+                in_container: false
+            - check: command=charly udev status exits 0 and reports device + rule status (GPU-less graceful)
+              id: udev-status-runs
+              exit_status: 0
+              stdout:
+                - contains: 'GPU Devices:'
+                - contains: 'Udev Rules:'
+              context:
+                - runtime
+              command:
+                command: ${CHARLY_BIN} udev status
+                in_container: false
