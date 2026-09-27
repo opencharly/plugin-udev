@@ -23,20 +23,26 @@
 package udev
 
 import (
+	"embed"
+
 	"github.com/opencharly/sdk"
 	pb "github.com/opencharly/spec/proto"
 )
+
+//go:embed schema/*.cue
+var schemaFS embed.FS
 
 // NewProvider returns the udev provider.
 func NewProvider() pb.ProviderServer { return &provider{} }
 
 // NewMeta advertises NO gRPC capability — command:udev is CLI-dispatched, not resolved
-// through the gRPC provider registry — shipping only the self-contained doc schema to
-// satisfy the host's non-empty-schema load gate (via sdk.NewMeta → BuildCapabilities).
+// through the gRPC provider registry — but it still ships this plugin's OWN self-contained
+// CUE schema (schema/udev.cue) over Describe via sdk.NewMeta → BuildCapabilities: there is
+// NO schema-less plugin, the schema is the uniform surface every plugin presents.
 func NewMeta() pb.PluginMetaServer {
 	return sdk.NewMeta("2026.179.0000",
 		[]sdk.ProvidedCapability{},
-		nil)
+		schemaFS)
 }
 
 // CliMain is the plugin's CLI entrypoint (command:udev dispatch).
