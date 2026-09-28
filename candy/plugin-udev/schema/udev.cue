@@ -1,0 +1,24 @@
+// plugin-udev's OWN self-contained CUE schema — the SINGLE SOURCE for this plugin's
+// served declaration surface (there is no schema-less plugin: every plugin ships a
+// non-empty schema over Describe).
+//
+// SELF-CONTAINED and PACKAGE-LESS: it references no base def and carries no package
+// clause, so it compiles STANDALONE — the property the SDK's serve-side compile needs
+// and the property that lets the host splice `base ++ plugin` at the load gate
+// (registerPluginUnitSchema); a self-contained schema that will not splice is a LOUD
+// load failure.
+//
+// NO GO CONSUMER of the SERVED schema: the plugin declares no typed `plugin_input`
+// (its authored input is its pass-through CLI grammar), so nothing decodes a
+// `plugin_input` from this served schema — it is the documentation/config surface
+// spliced onto the base at the load gate.
+//
+// It DOCUMENTS the `command: udev` contract. The command is CLI-dispatched (`syscall.Exec`), so the provider advertises NO gRPC capability; the concrete subcommands live in the CLI grammar.
+#UdevPlugin: {
+	// The command word the plugin serves.
+	command: "udev"
+
+	// What the command does, in one line (the public-docs surface).
+	contract: string & !=""
+
+}
