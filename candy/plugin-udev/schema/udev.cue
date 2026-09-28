@@ -8,10 +8,10 @@
 // (registerPluginUnitSchema); a self-contained schema that will not splice is a LOUD
 // load failure.
 //
-// NO GO CONSUMER: the plugin declares no typed `plugin_input` (its authored input is
-// its pass-through CLI grammar), so this schema generates NO `params` package and has
-// NO `cue exp gengotypes` artifact — it is the SERVED documentation/config surface,
-// not a code-generation source.
+// NO GO CONSUMER of the SERVED schema: the plugin declares no typed `plugin_input`
+// (its authored input is its pass-through CLI grammar), so nothing decodes a
+// `plugin_input` from this served schema — it is the documentation/config surface
+// spliced onto the base at the load gate.
 //
 // It DOCUMENTS the `command: udev` contract. The command is CLI-dispatched (`syscall.Exec`), so the provider advertises NO gRPC capability; the concrete subcommands live in the CLI grammar.
 #UdevPlugin: {
