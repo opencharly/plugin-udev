@@ -1,7 +1,5 @@
-version: 2026.232.0520
 plugin-udev:
     candy:
-        version: 2026.179.0000
         description: |-
             OUT-OF-TREE charly COMMAND-class plugin serving the externalized `charly udev …`
             CLI — the GPU-device udev-rule manager (generate / install / remove / status),
