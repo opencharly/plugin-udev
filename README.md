@@ -43,8 +43,7 @@ charly udev status       # report GPU devices + rule status
 ## Related
 
 - Owning skill: `/charly-automation:udev` — the GPU device access rules and
-  `charly udev` commands. This candy carries no `skill:` entity of its own; the
-  gap is tracked in
-  [opencharly/opencharly#291](https://github.com/opencharly/opencharly/issues/291).
+  `charly udev` commands, projected from this candy's own `skill:` entity; the
+  body is `.agents/skills/udev/SKILL.md`.
 - `/charly-internals:plugin` — the plugin/provider model.
 - [`opencharly/charly`](https://github.com/opencharly/charly) — the charly CLI.
